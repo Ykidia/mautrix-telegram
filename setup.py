@@ -23,9 +23,9 @@ linkified_version = {linkified_version!r}
 setuptools.setup(
     name="mautrix-telegram",
     version=version,
-    url="https://github.com/element-hq/mautrix-telegram",
+    url="https://github.com/ykidia/mautrix-telegram",
     project_urls={
-        "Changelog": "https://github.com/element-hq/mautrix-telegram/blob/element-master/CHANGELOG.md",
+        "Changelog": "https://github.com/ykidia/mautrix-telegram/blob/element-master/CHANGELOG.md",
     },
 
     author="Tulir Asokan",

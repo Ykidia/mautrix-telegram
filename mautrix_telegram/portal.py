@@ -507,6 +507,9 @@ class Portal(DBPortal, BasePortal):
             prefix="#",
             suffix=f":{cls.hs_domain}",
         )
+        cls.portal_displayname_template = SimpleTemplate(
+            cls.config["bridge.displayname_template"], "displayname"
+        )
         NotificationDisabler.puppet_cls = p.Puppet
         NotificationDisabler.config_enabled = cls.config["bridge.backfill.disable_notifications"]
 
@@ -1369,12 +1372,20 @@ class Portal(DBPortal, BasePortal):
         if self.title == title and (self.name_set or not self.set_dm_room_metadata):
             return False
 
+        formatted_title = title
+        if hasattr(self.__class__, 'portal_displayname_template') and self.portal_displayname_template:
+            try:
+                formatted_title = self.portal_displayname_template.format_full(title)
+            except Exception as e:
+                self.log.warning(f"Failed to format portal name with displayname_template: {e}")
+                formatted_title = title
+
         self.title = title
         self.name_set = False
         if self.mxid and self.set_dm_room_metadata:
             try:
                 await self._try_set_state(
-                    sender, EventType.ROOM_NAME, RoomNameStateEventContent(name=self.title)
+                    sender, EventType.ROOM_NAME, RoomNameStateEventContent(name=formatted_title)
                 )
                 self.name_set = True
             except Exception as e:
